@@ -10,6 +10,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import ahc.httpclient.ZuoraHttpClient;
+import ahc.properties.ZuoraProperties;
 import ahc.service.AccountService;
 import ahc.service.RatePlanService;
 import ahc.service.SubscriptionService;
@@ -23,18 +24,18 @@ import okhttp3.OkHttpClient;
 
 public class Main {
 	
-	private final String user = "user";
-	private final String password = "password!";
 	private final String accNumber = "A00001492";
 	
-	public Main() {
-		init();
-		
+	public Main(ZuoraProperties properties) {
+		init( properties.getRestUser(), properties.getRestPassword() );
+	}
+	
+	public void startRetrieveHistory()
+	{
 		try {
 			Set<SubscriptionHistory> subHistory = new HashSet<>();
 			Map<String, SortedSet<AmendmentHistory>> amndHistory = new HashMap<String, SortedSet<AmendmentHistory>>();
 			// get the history for account's subscriptions and amendments of each subscription
-//			retrieveHistory(subHistory, amndHistory);
 			retrieveHistoryV2(subHistory, amndHistory);
 			
 			// print out all the history
@@ -44,7 +45,7 @@ public class Main {
 			e.printStackTrace();
 		}
 	}
-
+	
 	private void retrieveHistoryV2(Set<SubscriptionHistory> subHistory,
 			Map<String, SortedSet<AmendmentHistory>> amndHistory) throws Exception {
 		
@@ -150,7 +151,7 @@ public class Main {
 		amndHSet.add( item );
 		amndHistory.put(key, amndHSet );
 	}
-	private void init() {
+	private void init(String user, String password) {
 	
 		// share between calls to save resources
 		ZuoraHttpClient zuoraHttpClient = new ZuoraHttpClient(new OkHttpClient(), user, password);

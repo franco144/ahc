@@ -7,21 +7,41 @@ import java.util.TreeSet;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ahc.httpclient.bean.ZuoraRestErrorResponse;
+import ahc.properties.ZuoraProperties;
 import ahc.service.SubscriptionsWrapper;
 import ahc.service.bean.Amendment;
+import ahc.service.bean.CamelCaseFieldsClass;
 import ahc.service.bean.RatePlanObject;
 import ahc.service.bean.Subscription;
 
 public class Launcher {
 
 	public static void main(String[] args) {
-		new Main();
 		
+		ZuoraProperties properties = new ZuoraProperties();
+		Main main = new Main(properties);
+		
+		main.startRetrieveHistory();
+		
+//		testParseCamelCase();
 //		testCompare();
 //		testJsonMapperRatePlan();
 //		testJsonMapperAmendment();
 //		testStreamFilter();
 //		testErrorResponse();
+	}
+	
+	private static void testParseCamelCase() {
+		String postBody = "{\"Id\":123,\"InvoiceId\":\"F91198EB81E4BBDA\"}";
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			CamelCaseFieldsClass carl = mapper.readValue(postBody, CamelCaseFieldsClass.class);
+			System.out.println( carl );
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+		System.exit(0);
 	}
 	
 	private static void testErrorResponse() {
